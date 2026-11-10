@@ -1,0 +1,34 @@
+task:
+  name: poisson
+  pde: "-u_xx - u_yy = f(x,y)"
+  domain:
+    x: [0.0, 1.0]
+    y: [0.0, 1.0]
+  forcing_function: "sin(pi*x)*sin(pi*y)"
+  exact_solution: "sin(pi*x)*sin(pi*y) / (2 * pi^2)"
+  boundary_conditions:
+    type: dirichlet
+    value: 0.0
+  n_collocation: 10000
+  n_boundary: 400
+  n_test: 5000
+  noise_std: 0.01
+
+training:
+  epochs: 20000
+  lr: 1e-3
+  scheduler: cosine
+  patience: 2000
+  batch_size: null
+
+evaluation:
+  metrics: [gaussian_nll, rmse, crps, ece, coverage_90, coverage_50]
+  n_mc_samples: 100
+  calibration_bins: 20
+
+optuna:
+  n_trials: 50
+  timeout: 3600
+  sampler: TPE
+  pruner: MedianPruner
+  objective_metric: gaussian_nll

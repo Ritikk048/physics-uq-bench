@@ -1,0 +1,35 @@
+task:
+  name: heat_equation
+  pde: "u_t = alpha * u_xx"
+  domain:
+    x: [0.0, 1.0]
+    t: [0.0, 1.0]
+  alpha: 0.01  # thermal diffusivity
+  boundary_conditions:
+    u_at_x0: 0.0
+    u_at_x1: 0.0
+  initial_condition: "sin(pi * x)"
+  n_collocation: 10000
+  n_boundary: 200
+  n_initial: 200
+  n_test: 5000
+  noise_std: 0.01
+
+training:
+  epochs: 20000
+  lr: 1e-3
+  scheduler: cosine
+  patience: 2000
+  batch_size: null  # full batch for PINNs/GPs
+
+evaluation:
+  metrics: [gaussian_nll, rmse, crps, ece, coverage_90, coverage_50]
+  n_mc_samples: 100
+  calibration_bins: 20
+
+optuna:
+  n_trials: 50
+  timeout: 3600
+  sampler: TPE
+  pruner: MedianPruner
+  objective_metric: gaussian_nll
